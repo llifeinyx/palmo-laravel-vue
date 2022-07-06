@@ -12,22 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "MainPage",
-  methods: {
-    logout: function logout() {
-      var _this = this;
-
-      axios.post('/logout').then(function (r) {
-        localStorage.removeItem('x_xsrf_token');
-
-        _this.$router.push('/').then(function (r) {
-          return location.reload();
-        })["catch"](function (e) {
-          return location.reload();
-        });
-      });
-    }
-  }
+  name: "MainPage"
 });
 
 /***/ }),
@@ -47,47 +32,10 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div", [_c("div", {
-    staticClass: "row"
-  }, [_c("router-link", {
-    attrs: {
-      to: {
-        name: "get"
-      }
-    }
-  }, [_vm._v("Get")]), _vm._v(" "), _c("router-link", {
-    attrs: {
-      to: {
-        name: "auth.login"
-      }
-    }
-  }, [_vm._v("Login")]), _vm._v(" "), _c("router-link", {
-    attrs: {
-      to: {
-        name: "auth.register"
-      }
-    }
-  }, [_vm._v("Register")]), _vm._v(" "), _c("a", {
-    attrs: {
-      href: "#"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.logout.apply(null, arguments);
-      }
-    }
-  }, [_vm._v("Logout")])], 1), _vm._v(" "), _vm._m(0)]);
+  return _c("div");
 };
 
-var staticRenderFns = [function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
-  return _c("div", {
-    staticClass: "row"
-  }, [_c("h1", [_vm._v("Welcome")])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 

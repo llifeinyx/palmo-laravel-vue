@@ -18,6 +18,6 @@ export default {
 <style scoped>
     .register-container {
         width: 100%;
-        padding-top: 20vh;
+        padding-top: 10vh;
     }
 </style>

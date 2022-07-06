@@ -41,6 +41,7 @@ export default {
                         .then( res => {
                             localStorage.setItem('x_xsrf_token', res.config.headers['X-XSRF-TOKEN'])
                             this.$router.push('/')
+                                .then(r => location.reload())
                         })
                         .catch(e => this.errors = e.response.data.errors)
                 });

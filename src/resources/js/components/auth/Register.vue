@@ -32,7 +32,7 @@
 export default {
     name: "Register",
     data(){
-        return{
+        return {
             email: null,
             login: null,
             password: null,
@@ -40,6 +40,7 @@ export default {
             errors: {}
         }
     },
+
     methods: {
         register(){
             axios.get('/sanctum/csrf-cookie')
@@ -53,9 +54,10 @@ export default {
                         .then(r => {
                             localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
                             this.$router.push('/')
+                                .then(r => location.reload())
                         })
                         .catch(e => {
-                            console.log(e.response)
+                            //console.log(e.response)
                             this.errors = e.response.data.errors
                         })
                 })

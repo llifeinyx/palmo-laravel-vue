@@ -27,6 +27,11 @@ const router = new VueRouter({
            name: 'auth.register'
        },
        {
+           path: '/profile',
+           component: () => import('./views/ProfilePage'),
+           name: 'profile'
+       },
+       {
            path: '*',
            component: null,
            name: '404'
