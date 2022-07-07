@@ -33,7 +33,7 @@ const router = new VueRouter({
        },
        {
            path: '*',
-           component: null,
+           component: () => import('./components/abort/404'),
            name: '404'
        }
    ]

@@ -39,6 +39,7 @@ export default {
                 .then(response => {
                     axios.post('/login', {email: this.email, password: this.password, remember: this.remember})
                         .then( res => {
+                            //console.log(res)
                             localStorage.setItem('x_xsrf_token', res.config.headers['X-XSRF-TOKEN'])
                             this.$router.push('/')
                                 .then(r => location.reload())

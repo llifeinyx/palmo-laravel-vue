@@ -1,12 +1,12 @@
 <template>
     <div class="profile-component-container">
-        <h1>{{user.name}} profile</h1>
+        <h1>{{this.stateUser.name}} profile</h1>
         <div class="profile-update-group">
             <div class="input-group">
                 <label for="name">Login</label>
-                <input @input="resetResponseStatus" v-model="user.name" type="text" id="name" class="form-control" placeholder="Login" aria-label="Login">
+                <input @input="resetResponseStatus" v-model="name" type="text" id="name" class="form-control" placeholder="Login" aria-label="Login">
                 <div v-if="this.responseStatus === 200" class="success-update">Success update</div>
-                <div v-if="this.responseStatus !== 200" class="error-update">{{error}}</div>
+                <div v-if="this.responseStatus === 422" class="error-update">{{error}}</div>
             </div>
         </div>
         <div class="profile-update-submit">
@@ -16,31 +16,44 @@
 </template>
 
 <script>
+import {mapActions, mapGetters} from "vuex";
+
 export default {
     name: "Profile",
     data() {
         return {
             user: {},
             error: null,
-            responseStatus: null
+            responseStatus: null,
+            name: String
         }
     },
-    mounted() {
-        axios.get('/sanctum/csrf-cookie').then(response => {
-            axios.get('/api/user')
-                .then(r => this.user = r.data)
-        });
+    computed: {
+        ...mapGetters(["stateUser"]),
+    },
+    beforeMount() {
+        this.getUser()
+            .then(r => {
+                this.user = this.stateUser
+                this.name = this.user.name
+            });
     },
     methods: {
+        ...mapActions(["getUser"]),
         updateProfile() {
+            this.user.name = this.name
             axios.put('/api/user/' + this.user.id, this.user)
                 .then(r => {
-                    //console.log(r.status)
-                    this.user = r.data
+                    console.log(r.status)
+                    this.getUser()
+                        .then(r => {
+                            this.user = this.stateUser
+                            this.name = this.user.name
+                        });
                     this.responseStatus = r.status
                 })
                 .catch(e => {
-                    console.log(e.response)
+                    //console.log(e.response)
                     this.responseStatus = e.response.status
                     this.error = e.response.data.message
                 })

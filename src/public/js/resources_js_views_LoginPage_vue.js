@@ -31,6 +31,7 @@ __webpack_require__.r(__webpack_exports__);
           password: _this.password,
           remember: _this.remember
         }).then(function (res) {
+          //console.log(res)
           localStorage.setItem('x_xsrf_token', res.config.headers['X-XSRF-TOKEN']);
 
           _this.$router.push('/').then(function (r) {

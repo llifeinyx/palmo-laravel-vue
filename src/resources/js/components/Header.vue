@@ -6,48 +6,43 @@
             </div>
 
             <div class="auth-group">
-                <router-link v-if="!stateToken" :class="[this.currentRouteLogin ? 'btn-secondary' : 'btn-dark']" class="btn auth-group__button" :to="{name: 'auth.login'}">Login in</router-link>
-                <router-link v-if="!stateToken" :class="[this.currentRouteRegister ? 'btn-secondary' : 'btn-dark']" class="btn auth-group__button" :to="{name: 'auth.register'}">Sign up</router-link>
+                <router-link v-if="!stateToken" class="btn btn-dark auth-group__button" :to="{name: 'auth.login'}">Login in</router-link>
+                <router-link v-if="!stateToken" class="btn btn-dark auth-group__button" :to="{name: 'auth.register'}">Sign up</router-link>
                 <router-link v-if="stateToken" class="btn btn-dark auth-group__button" :to="{name: 'profile'}">Profile</router-link>
                 <a v-if="stateToken" class="btn auth-group__button btn-dark" @click.prevent="logout" href="#">Logout</a>
             </div>
         </div>
+        <modal-logout @close-logout="closeLogout" v-show="modalShow"/>
     </div>
 </template>
 
 <script>
-//import {next} from "lodash/seq";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
+import ModalLogout from "./ModalLogout";
 
 export default {
     name: "Header",
-    data() {
-        return {
-            currentRoute: window.location.pathname,
-        }
-    },
-    // beforeRouteUpdate (to, from) {
-    //     this.currentRoute = to.path;
-    //     next()
-    // },
+    components: {ModalLogout},
     computed: {
         ...mapGetters(["stateToken"]),
-        currentRouteLogin: function () {
-            return this.currentRoute === '/login';
-        },
-        currentRouteRegister: function () {
-            return this.currentRoute === '/register';
+    },
+    mounted() {
+        if (this.stateToken){
+            this.getUser()
+        }
+    },
+    data () {
+        return {
+            modalShow: false,
         }
     },
     methods: {
-        logout(){
-            axios.post('/logout')
-                .then(r => {
-                    localStorage.removeItem('x_xsrf_token')
-                    this.$router.push('/')
-                        .then(r => location.reload())
-                        .catch(e => location.reload())
-                })
+        ...mapActions(["getUser"]),
+        logout() {
+            this.modalShow = true
+        },
+        closeLogout() {
+            this.modalShow = false
         }
     }
 }
@@ -73,5 +68,7 @@ export default {
     padding: 5px 10px;
     border-radius: 10px;
 }
-
+.router-link-exact-active {
+    background-color: #34128d;
+}
 </style>

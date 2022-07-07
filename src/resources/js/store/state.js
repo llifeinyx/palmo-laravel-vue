@@ -1,14 +1,20 @@
+import axios from "axios";
 import Vue from "vue";
 import Vuex from "vuex";
 import getters from "./getters";
+import actions from "./actions";
+import mutations from "./mutations";
 
-//import {createStore} from "vuex"
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
         token: localStorage.getItem('x_xsrf_token'),
+        user: {},
+
     },
-    getters
+    getters,
+    actions,
+    mutations
 })

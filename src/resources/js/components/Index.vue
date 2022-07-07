@@ -16,6 +16,7 @@ export default {
 
 <style>
     body {
+        position: relative;
         background-color: #cbcbcb;
         font-family: Roboto, sans-serif;
     }

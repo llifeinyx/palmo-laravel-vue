@@ -2,19 +2,18 @@
     <div class="profile-container">
         <div class="content-container">
             <div class="tab-control">
-                <div @click="updateCurrentComponent(0)" class="tab-control__button">
+                <div :class="{'tab-control__button-active' : currentComponent.name === 'Profile'}" @click="updateCurrentComponent(0)" class="tab-control__button">
                     Profile
                 </div>
-                <div @click="updateCurrentComponent(1)" class="tab-control__button">
+                <div :class="{'tab-control__button-active' : currentComponent.name === 'null'}" @click="updateCurrentComponent(1)" class="tab-control__button">
                     My favorite
                 </div>
-                <div @click="updateCurrentComponent(2)" class="tab-control__button">
+                <div :class="{'tab-control__button-active' : currentComponent.name === 'CreateBlog'}" @click="updateCurrentComponent(2)" class="tab-control__button">
                     Create blog
                 </div>
             </div>
             <div class="tab-current">
                 <keep-alive>
-
                     <component :is="currentComponent"/>
                 </keep-alive>
             </div>
@@ -24,6 +23,9 @@
 
 <script>
 import Profile from "../components/profile/Profile";
+import CreateBlog from "../components/profile/CreateBlog";
+import MyFavorite from "../components/profile/MyFavorite";
+
 
 export default {
     name: "ProfilePage",
@@ -35,11 +37,11 @@ export default {
     methods: {
         updateCurrentComponent(id) {
             if (id === 0) {
-                this.currentComponent = Profile
+                this.currentComponent = Profile;
             } else if (id === 1) {
-                this.currentComponent = null
+                this.currentComponent = MyFavorite
             } else if (id === 2) {
-                this.currentComponent = null
+                this.currentComponent = CreateBlog;
             }
         }
     }
@@ -74,7 +76,7 @@ export default {
 }
 .tab-control__button:hover {
     cursor: pointer;
-    background-color: #5b5b5b;
+    background-color: #722d9b;
     transition: background-color, .2s;
 }
 </style>
