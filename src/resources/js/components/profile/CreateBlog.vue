@@ -31,15 +31,15 @@
                 <h4>Tags:</h4>
                 <div class="input-tags">
                     <div class="input-tags__wrapper">
-                        <div class="suggested-tag current-tag" v-for="currentTag in currentTags" @click="deleteCurrentTag(currentTag)"><span>{{currentTag}}</span><span class="special-char__red">-</span></div>
-                        <div class="suggested-tag" v-for="suggestedTag in suggestedTags" @click="addCurrentTag(suggestedTag)"><span>{{suggestedTag}}</span><span class="special-char__green">+</span></div>
+                        <div class="suggested-tag current-tag" v-for="currentTag in currentTags" @click="deleteCurrentTag(currentTag)"><span>{{currentTag.name}}</span><span class="special-char__red">-</span></div>
+                        <div class="suggested-tag" v-for="suggestedTag in suggestedTags" @click="addCurrentTag(suggestedTag)"><span>{{suggestedTag.name}}</span><span class="special-char__green">+</span></div>
                     </div>
                 </div>
                 <div v-if="tagError" class="section-error">Maximum 5 tags!</div>
                 <input v-model="tag" type="text" name="tags" id="tags" placeholder="Tags">
             </div>
             <div class="submit-blog">
-                <button class="btn btn-outline-primary">create blog</button>
+                <button @click="createBlog" class="btn btn-outline-primary">create blog</button>
             </div>
         </div>
     </div>
@@ -79,10 +79,10 @@ export default {
     watch: {
         tag: function (val) {
             this.suggestedTags = this.tags.filter(tag => {
-                if (this.currentTags.includes(tag)){
+                if (this.currentTags.includes(tag.name)){
                     return false
                 }
-                if (tag.includes(val.toLowerCase())) {
+                if (tag.name.includes(val.toLowerCase())) {
                     return tag
                 }
             })
@@ -102,7 +102,7 @@ export default {
                 if (section.id === event.id) {
                     this.sections.splice(index, 1)
                     this.countTextSections--
-                    return true
+                    return
                 }
             })
         },
@@ -122,7 +122,7 @@ export default {
                 if (section.id === event.id) {
                     this.sections.splice(index, 1)
                     this.countImageSections--
-                    return true
+                    return
                 }
             })
         },
@@ -136,25 +136,31 @@ export default {
             this.sections.push({id: this.listId, type: ImageArea})
             this.listId++
         },
-        addCurrentTag(name) {
+        addCurrentTag(tagObj) {
             if (this.countCurrentTags === 5) {
                 this.tagError = true
                 setTimeout(() => this.tagError = false, 3000)
                 return
             }
 
-            this.suggestedTags.find((tag, index) => tag === name ? this.suggestedTags.splice(index, 1) : null)
-            this.currentTags.push(name)
+            const index = this.suggestedTags.indexOf(tagObj)
+            this.suggestedTags.splice(index, 1)
+
+            this.currentTags.push(tagObj)
             this.countCurrentTags++
         },
-        deleteCurrentTag(name) {
-            this.currentTags.find((tag, index) => {
-                if (tag === name) {
-                    this.currentTags.splice(index, 1)
-                }
-            })
-            this.suggestedTags.push(name)
+        deleteCurrentTag(tagObj) {
+            const index = this.currentTags.indexOf(tagObj)
+            this.currentTags.splice(index, 1)
+
+            this.suggestedTags.push(tagObj)
             this.countCurrentTags--
+        },
+        createBlog() {
+            const currentTagsId = this.currentTags.map(tagObj => tagObj.id)
+            axios.post('/api/blog', {tags: currentTagsId})
+                .then(r => console.log(r))
+                .catch(e => console.log(e.response))
         }
     }
 }

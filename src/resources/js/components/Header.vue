@@ -29,6 +29,13 @@ export default {
     mounted() {
         if (this.stateToken){
             this.getUser()
+                .catch((e) => {
+                    this.$router.push('/')
+                        .then(r => {
+                            localStorage.removeItem('x_xsrf_token')
+                            location.reload()
+                        })
+                })
         }
     },
     data () {

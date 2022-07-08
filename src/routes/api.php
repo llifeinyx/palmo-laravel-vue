@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -30,5 +31,11 @@ Route::group([
 ], function () {
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
 });
-
+Route::group([
+    'as' => 'blog.',
+    'prefix' => 'blog',
+    'middleware' => ['auth:sanctum']
+], function () {
+    Route::post('/', [BlogController::class, 'store'])->name('store');
+});
 //Route::group([])
