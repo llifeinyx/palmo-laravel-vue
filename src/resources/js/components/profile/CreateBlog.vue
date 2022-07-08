@@ -22,8 +22,25 @@
                 </div>
             </div>
         </div>
-        <div class="у">
-
+        <div class="last-area">
+            <div>
+                <h4>Title of blog:</h4>
+                <input type="text" name="title" id="title" placeholder="Maximum 20 characters">
+            </div>
+            <div>
+                <h4>Tags:</h4>
+                <div class="input-tags">
+                    <div class="input-tags__wrapper">
+                        <div class="suggested-tag current-tag" v-for="currentTag in currentTags" @click="deleteCurrentTag(currentTag)"><span>{{currentTag}}</span><span class="special-char__red">-</span></div>
+                        <div class="suggested-tag" v-for="suggestedTag in suggestedTags" @click="addCurrentTag(suggestedTag)"><span>{{suggestedTag}}</span><span class="special-char__green">+</span></div>
+                    </div>
+                </div>
+                <div v-if="tagError" class="section-error">Maximum 5 tags!</div>
+                <input v-model="tag" type="text" name="tags" id="tags" placeholder="Tags">
+            </div>
+            <div class="submit-blog">
+                <button class="btn btn-outline-primary">create blog</button>
+            </div>
         </div>
     </div>
 </template>
@@ -31,13 +48,18 @@
 <script>
 import TextArea from "./blog/TextArea";
 import ImageArea from "./blog/ImageArea";
-import {list} from "postcss";
 
 export default {
     name: "CreateBlog",
     components: {TextArea, ImageArea},
     data() {
         return {
+            tag: null,
+            tags: [],
+            suggestedTags: [],
+            currentTags: [],
+            tagError: false,
+            countCurrentTags: 0,
             textError: null,
             imageError: null,
             countImageSections: 0,
@@ -47,14 +69,31 @@ export default {
             ]
         }
     },
+    mounted() {
+        axios.get('/api/tags')
+            .then(r => {
+                this.tags = r.data
+                this.suggestedTags = r.data
+            })
+    },
+    watch: {
+        tag: function (val) {
+            this.suggestedTags = this.tags.filter(tag => {
+                if (this.currentTags.includes(tag)){
+                    return false
+                }
+                if (tag.includes(val.toLowerCase())) {
+                    return tag
+                }
+            })
+        }
+    },
     methods: {
         setText(event) {
-            //console.log(event)
             let textSection = this.sections.find(section => section.id === event.id)
             textSection.text = event.text
         },
         setHeader(event) {
-            //console.log(event)
             let textSection = this.sections.find(section => section.id === event.id)
             textSection.header = event.header
         },
@@ -62,9 +101,10 @@ export default {
             this.sections.find((section, index) => {
                 if (section.id === event.id) {
                     this.sections.splice(index, 1)
+                    this.countTextSections--
+                    return true
                 }
             })
-            this.countTextSections--
         },
         addTextSection() {
             if (this.countTextSections === 5) {
@@ -81,19 +121,40 @@ export default {
             this.sections.find((section, index) => {
                 if (section.id === event.id) {
                     this.sections.splice(index, 1)
+                    this.countImageSections--
+                    return true
                 }
             })
-            this.countImageSections--
         },
         addImageSection() {
             if (this.countImageSections === 5) {
                 this.imageError = 'Maximum 5 image sections!'
-                setTimeout(() => this.imageError = null, 1000)
+                setTimeout(() => this.imageError = null, 3000)
                 return
             }
             this.countImageSections++
             this.sections.push({id: this.listId, type: ImageArea})
             this.listId++
+        },
+        addCurrentTag(name) {
+            if (this.countCurrentTags === 5) {
+                this.tagError = true
+                setTimeout(() => this.tagError = false, 3000)
+                return
+            }
+
+            this.suggestedTags.find((tag, index) => tag === name ? this.suggestedTags.splice(index, 1) : null)
+            this.currentTags.push(name)
+            this.countCurrentTags++
+        },
+        deleteCurrentTag(name) {
+            this.currentTags.find((tag, index) => {
+                if (tag === name) {
+                    this.currentTags.splice(index, 1)
+                }
+            })
+            this.suggestedTags.push(name)
+            this.countCurrentTags--
         }
     }
 }
@@ -150,5 +211,57 @@ export default {
 }
 ::-webkit-scrollbar-thumb {
     background-color: #180b3d;
+}
+.last-area {
+    padding: 10px;
+    position: relative;
+}
+.input-tags {
+    overflow-y: scroll;
+    margin-bottom: 10px;
+    padding: 5px;
+    color: #000;
+    width: 250px;
+    height: 125px;
+    background-color: #EBE8EF;
+}
+.input-tags__wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    gap: 5px;
+}
+.suggested-tag {
+    text-align: center;
+    font-size: 12px;
+    padding: 0 7px;
+    background-color: #9571FC;
+    border-radius: 5px;
+    height: 20px;
+}
+.suggested-tag:hover {
+    cursor: pointer;
+    background-color: #722d9b;
+    transition: background-color, .2s;
+    color: #EBE8EF;
+}
+.special-char {
+    font-weight: 1000;
+    margin-left: 4px;
+    text-align: center;
+    font-size: 12px;
+}.special-char__red {
+    margin-left: 4px;
+    color: #ee3333;
+}
+.special-char__green {
+    color: #2a8544;
+}
+.current-tag {
+    background-color: #722d9b;
+    color: #EBE8EF;
+}
+.submit-blog {
+    margin: 20px 0;
 }
 </style>
