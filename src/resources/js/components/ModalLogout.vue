@@ -4,8 +4,8 @@
         <div class="logout">
             <h1>Do you really want to logout?</h1>
             <div class="logout__button-group">
-                <button @click="closeLogout" class="btn btn-outline-secondary">No</button>
-                <button @click="acceptLogout" class="btn btn-outline-danger">Yes</button>
+                <button @click="closeLogout" class="btn btn-dark">No</button>
+                <button @click="acceptLogout" class="btn btn-danger">Yes</button>
             </div>
         </div>
     </div>
@@ -67,5 +67,6 @@ export default {
 }
 .logout__button-group > button {
     font-size: 26px;
+    border-radius: 10px;
 }
 </style>
