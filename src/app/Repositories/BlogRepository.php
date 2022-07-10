@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Blog;
+use Illuminate\Support\Facades\Auth;
 
 class BlogRepository
 {
@@ -14,6 +15,16 @@ class BlogRepository
     public function index()
     {
         return $this->query()->get();
+    }
+
+    public function store($title)
+    {
+        $blog = Blog::create([
+            'title' => $title,
+            'user_id' => Auth::id()
+        ]);
+
+        return $blog;
     }
 }
 

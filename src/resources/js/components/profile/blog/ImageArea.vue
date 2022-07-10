@@ -26,6 +26,7 @@ export default {
     methods: {
         checkFile(event) {
             let image = event.target.files[0];
+            this.$emit('upload-file', {file: image, id: this.id})
             //this.image = this.$refs.file;
             let reader  = new FileReader();
 

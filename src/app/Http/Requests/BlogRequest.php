@@ -25,12 +25,22 @@ class BlogRequest extends FormRequest
      */
     public function rules()
     {
+        //last id
         $lastId = Tag::query()->latest('id')->first();
 
         return [
             'tags' => 'required|array|max:5',
             'tags.*' => 'integer|min:0|max:'.$lastId->id,
-
+            'title' => 'required|string|max:20',
+            'textSections' => 'required|array|max:5',
+            'textSections.*' => 'array',
+            'textSections.*.text' => 'required|string',
+            'textSections.*.header' => 'required|string',
+            'textSections.*.id' => 'required|integer',
+            'files' => 'array',
+            'files.*' => 'array|max:5',
+            'files.*.id' => 'required|integer',
+            'files.*.file' => 'required|file|image'
         ];
     }
 }

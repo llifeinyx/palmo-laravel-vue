@@ -30,9 +30,9 @@ export default {
         if (this.stateToken){
             this.getUser()
                 .catch((e) => {
+                    localStorage.removeItem('x_xsrf_token')
                     this.$router.push('/')
                         .then(r => {
-                            localStorage.removeItem('x_xsrf_token')
                             location.reload()
                         })
                 })

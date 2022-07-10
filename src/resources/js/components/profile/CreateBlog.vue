@@ -18,14 +18,17 @@
         <div class="create-area">
             <div class="create-zone">
                 <div class="input-card" v-for="section in sections">
-                    <component @delete-image-section="deleteImageSection" @delete-text-section="deleteTextSection" @set-header="setHeader" @set-text="setText" :is="section.type" :key="section.id" :id="section.id"/>
+                    <component @upload-file="uploadFile" @delete-image-section="deleteImageSection" @delete-text-section="deleteTextSection" @set-header="setHeader" @set-text="setText" :is="section.type" :key="section.id" :id="section.id"/>
                 </div>
             </div>
         </div>
         <div class="last-area">
             <div>
+                <div v-if="textSectionInnerError" class="section-error">{{ textSectionInnerError }}</div>
+                <div v-if="textSectionError" class="section-error">{{ textSectionError }}</div>
                 <h4>Title of blog:</h4>
-                <input type="text" name="title" id="title" placeholder="Maximum 20 characters">
+                <input v-model="title" type="text" name="title" id="title" placeholder="Maximum 20 characters">
+                <div v-if="titleErrors" class="section-error">{{ titleErrors }}</div>
             </div>
             <div>
                 <h4>Tags:</h4>
@@ -36,6 +39,7 @@
                     </div>
                 </div>
                 <div v-if="tagError" class="section-error">Maximum 5 tags!</div>
+                <div v-if="tagErrors" class="section-error">{{ tagErrors }}</div>
                 <input v-model="tag" type="text" name="tags" id="tags" placeholder="Tags">
             </div>
             <div class="submit-blog">
@@ -54,19 +58,25 @@ export default {
     components: {TextArea, ImageArea},
     data() {
         return {
+            formData: new FormData(),
             tag: null,
             tags: [],
+            title: null,
             suggestedTags: [],
             currentTags: [],
             tagError: false,
             countCurrentTags: 0,
             textError: null,
             imageError: null,
+            textSectionError: null,
+            textSectionInnerError: null,
             countImageSections: 0,
             countTextSections: 0,
             listId: 0,
             sections: [
-            ]
+            ],
+            tagErrors: null,
+            titleErrors: null
         }
     },
     mounted() {
@@ -98,13 +108,10 @@ export default {
             textSection.header = event.header
         },
         deleteTextSection(event) {
-            this.sections.find((section, index) => {
-                if (section.id === event.id) {
-                    this.sections.splice(index, 1)
-                    this.countTextSections--
-                    return
-                }
-            })
+            const index = this.sections.findIndex(obj => obj.id === event.id)
+
+            this.sections.splice(index, 1)
+            this.countTextSections--
         },
         addTextSection() {
             if (this.countTextSections === 5) {
@@ -118,13 +125,9 @@ export default {
             this.listId++
         },
         deleteImageSection(event) {
-            this.sections.find((section, index) => {
-                if (section.id === event.id) {
-                    this.sections.splice(index, 1)
-                    this.countImageSections--
-                    return
-                }
-            })
+            const index = this.sections.findIndex(obj => obj.id === event.id)
+            this.sections.splice(index, 1)
+            this.countImageSections--
         },
         addImageSection() {
             if (this.countImageSections === 5) {
@@ -133,7 +136,7 @@ export default {
                 return
             }
             this.countImageSections++
-            this.sections.push({id: this.listId, type: ImageArea})
+            this.sections.push({id: this.listId, file: '',type: ImageArea})
             this.listId++
         },
         addCurrentTag(tagObj) {
@@ -156,12 +159,80 @@ export default {
             this.suggestedTags.push(tagObj)
             this.countCurrentTags--
         },
+        uploadFile(event) {
+            const i = this.sections.findIndex(section => {
+                if (section.id === event.id && section.type === ImageArea) {
+                    return true
+                }
+            })
+            this.sections[i].file = event.file
+        },
         createBlog() {
-            const currentTagsId = this.currentTags.map(tagObj => tagObj.id)
-            axios.post('/api/blog', {tags: currentTagsId})
+            //push current tags
+            this.currentTags.forEach(tag => {
+                this.formData.append('tags[]', tag.id)
+            })
+
+            //push text sections
+            const textSections = this.sections.filter(section => section.type === TextArea)
+            textSections.forEach((section, index) => {
+
+                if (section.text){
+                    this.formData.append('textSections[' + index + '][text]', section.text)
+                }
+                if (section.header) {
+                    this.formData.append('textSections[' + index + '][header]', section.header)
+                }
+                this.formData.append('textSections[' + index + '][id]', section.id)
+            })
+
+            //push image sections
+            const imageSections = this.sections.filter(section => section.type === ImageArea)
+            imageSections.forEach((image, index) => {
+                if(image.file !== ""){
+                    this.formData.append('files[' + index + '][file]', image.file)
+                    this.formData.append('files[' + index + '][id]', image.id)
+                }
+            })
+
+            //push title
+            if (this.title) {
+                this.formData.append('title', this.title)
+            }
+
+            axios.post('/api/blog',this.formData)
                 .then(r => console.log(r))
-                .catch(e => console.log(e.response))
-        }
+                .catch(e => {
+                    console.log(e.response)
+                    let errors = e.response.data.errors
+                    if (errors.tags) {
+                        this.tagErrors = errors.tags[0]
+                        delete errors.tags
+                        setTimeout(() => this.tagErrors = null, 3000)
+                    }
+                    if (errors.title) {
+                        this.titleErrors = errors.title[0]
+                        delete errors.title
+                        setTimeout(() => this.titleErrors = null, 3000)
+                    }
+                    if (errors.textSections) {
+                        this.textSectionError = errors.textSections[0]
+                        delete errors.textSections
+                        setTimeout(() => this.textSectionError = null, 3000)
+                    }
+                    const keys = Object.keys(errors)
+                    keys.forEach((key) => {
+                        if (key.includes('textSections.')) {
+                            this.textSectionInnerError = 'Header and text fields in text section required!'
+                            setTimeout(() => this.textSectionInnerError = null, 3000)
+                        }
+                    })
+                    //console.log(e.response)
+                })
+
+            //reset formData
+            this.formData = new FormData()
+        },
     }
 }
 </script>

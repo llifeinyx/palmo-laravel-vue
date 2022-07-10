@@ -25,13 +25,13 @@ export default {
             user: {},
             error: null,
             responseStatus: null,
-            name: String
+            name: null
         }
     },
     computed: {
         ...mapGetters(["stateUser"]),
     },
-    beforeMount() {
+    mounted() {
         this.getUser()
             .then(r => {
                 this.user = this.stateUser

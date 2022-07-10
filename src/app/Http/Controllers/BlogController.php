@@ -30,7 +30,13 @@ class BlogController extends Controller
 
     public function store(BlogRequest $request)
     {
-        return response($request);
+
+        $this->service->store($request);
+
+        return $request;
+
+//        $path = $file->store('test');
+
         //$this->service->store($request);
     }
 
