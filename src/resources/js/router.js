@@ -32,14 +32,20 @@ const router = new VueRouter({
            name: 'profile'
        },
        {
+           path: '/blog/:id',
+           component: () => import('./components/blogs/BlogShow'),
+           name: 'blog.show'
+       },
+       {
            path: '*',
-           component: () => import('./components/abort/404'),
-           name: '404'
+           component: () => import('./components/abort/NotFound404'),
+           name: 'not-found'
        }
    ]
 });
 
 import AuthMiddleware from "./middleware/auth.js"
+import BlogShow from "./components/blogs/BlogShow";
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('x_xsrf_token')

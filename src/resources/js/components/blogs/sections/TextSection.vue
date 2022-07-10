@@ -1,12 +1,17 @@
 <template>
-<div>404</div>
+
 </template>
 
 <script>
 export default {
-    name: "404"
+    name: "TextSection",
+    props: {
+        header: null,
+        text: null
+    }
 }
 </script>
 
 <style scoped>
+
 </style>

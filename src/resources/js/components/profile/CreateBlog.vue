@@ -24,6 +24,7 @@
         </div>
         <div class="last-area">
             <div>
+                <div v-if="successCreate" class="success">Success create blog!</div>
                 <div v-if="textSectionInnerError" class="section-error">{{ textSectionInnerError }}</div>
                 <div v-if="textSectionError" class="section-error">{{ textSectionError }}</div>
                 <h4>Title of blog:</h4>
@@ -76,7 +77,8 @@ export default {
             sections: [
             ],
             tagErrors: null,
-            titleErrors: null
+            titleErrors: null,
+            successCreate: null
         }
     },
     mounted() {
@@ -201,7 +203,12 @@ export default {
             }
 
             axios.post('/api/blog',this.formData)
-                .then(r => console.log(r))
+                .then(r => {
+                    this.successCreate = true
+                    setTimeout(() => this.successCreate = null, 3000)
+                    console.log(r)
+
+                })
                 .catch(e => {
                     console.log(e.response)
                     let errors = e.response.data.errors

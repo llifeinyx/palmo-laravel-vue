@@ -36,6 +36,8 @@ Route::group([
     'prefix' => 'blog',
     'middleware' => ['auth:sanctum']
 ], function () {
+    Route::get('/all', [BlogController::class, 'index'])->name('index')->withoutMiddleware(['auth:sanctum']);
+    Route::get('/{blog}', [BlogController::class, 'show'])->name('show')->withoutMiddleware(['auth:sanctum']);
     Route::post('/', [BlogController::class, 'store'])->name('store');
 });
 //Route::group([])

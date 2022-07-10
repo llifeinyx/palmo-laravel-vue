@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Blog;
 use App\Models\ImageSection;
 use App\Models\Tag;
 use App\Models\TextSection;
@@ -16,6 +17,18 @@ class BlogService
     {
         $this->repository = $blogRepository;
     }
+
+    public function index()
+    {
+        return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->get();
+    }
+
+    public function show($id)
+    {
+        return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->get()->find($id);
+        //return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->find($id)->get();
+    }
+
     public function store(Request $request)
     {
         $data = $request->except('_method', '_token');
@@ -38,15 +51,13 @@ class BlogService
         }
 
         //Save images
-        if (isset($data['filse'])) {
-            foreach ($data['files'] as $image) {
-                $path = $image['file']->store('blogs/section_images', 'public');
-                ImageSection::create([
-                    'index' => $image['id'],
-                    'path' => $path,
-                    'blog_id' => $blog->id
-                ]);
-            }
+        foreach ($data['files'] as $image) {
+            $path = $image['file']->store('blogs/section_images', 'public');
+            ImageSection::create([
+                'index' => $image['id'],
+                'path' => $path,
+                'blog_id' => $blog->id
+            ]);
         }
     }
 }

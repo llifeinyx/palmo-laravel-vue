@@ -1,4 +1,6 @@
-export default (token, to, from, next) => {
+import axios from "axios";
+
+export default async (token, to, from, next) => {
     if (!token) {
         if (to.name === 'auth.login' || to.name === 'auth.register') {
             return next()
@@ -12,6 +14,7 @@ export default (token, to, from, next) => {
     }
 
     if (token) {
+
         if (to.name === 'auth.login' || to.name === 'auth.register') {
             return next({
                 name: 'profile'

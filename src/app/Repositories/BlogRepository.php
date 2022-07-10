@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BlogRepository
 {
-    private function query()
+    public function query()
     {
         return Blog::query();
     }

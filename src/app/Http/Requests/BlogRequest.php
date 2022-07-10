@@ -37,7 +37,7 @@ class BlogRequest extends FormRequest
             'textSections.*.text' => 'required|string',
             'textSections.*.header' => 'required|string',
             'textSections.*.id' => 'required|integer',
-            'files' => 'array',
+            'files' => 'required|array',
             'files.*' => 'array|max:5',
             'files.*.id' => 'required|integer',
             'files.*.file' => 'required|file|image'

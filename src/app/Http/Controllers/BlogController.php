@@ -20,7 +20,9 @@ class BlogController extends Controller
 
     public function index()
     {
-        //
+        $blogs = $this->service->index();
+
+        return $blogs;
     }
 
     public function create()
@@ -40,9 +42,11 @@ class BlogController extends Controller
         //$this->service->store($request);
     }
 
-    public function show(Blog $blog)
+    public function show($id)
     {
-        //
+        $blog = $this->service->show($id);
+
+        return $blog->toArray();
     }
 
     public function edit(Blog $blog)

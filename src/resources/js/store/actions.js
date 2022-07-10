@@ -10,5 +10,5 @@ export default {
         catch (e){
             context.commit("SET_USER", null)
         }
-    }
+    },
 }
