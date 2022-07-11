@@ -1,11 +1,13 @@
 <template>
     <div class="blog-container">
+        Title: {{blog.title}}
         <component v-for="section in sections"
                    :is="section.type"
-                   :key="section.id"
+                   :key="section.index"
                    :path="section.path"
                    :text="section.text"
-                   :header="section.header"/>
+                   :header="section.header"
+                   class="section-margin"/>
     </div>
 </template>
 
@@ -21,7 +23,7 @@ export default {
     data() {
         return {
             id: router.currentRoute.params.id,
-            blog: null,
+            blog: {},
             sections: []
         }
     },
@@ -63,7 +65,13 @@ export default {
 
 <style scoped>
 .blog-container {
-    max-width: 1280px;
+    max-width: 700px;
     margin: 50px auto;
+    padding: 40px;
+    background-color: #202c41;
+    color: #EBE8EF;
+}
+.section-margin {
+    margin: 30px 0;
 }
 </style>

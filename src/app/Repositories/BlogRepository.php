@@ -3,6 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Blog;
+use App\Models\ImageSection;
+use App\Models\TextSection;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Auth;
 
 class BlogRepository
@@ -15,6 +18,25 @@ class BlogRepository
     public function index()
     {
         return $this->query()->get();
+    }
+
+    public function destroy($id)
+    {
+        $blog = Blog::find($id);
+        $blog->tags()->detach($blog->tags);
+
+        $textSections = $blog->textSections;
+        TextSection::destroy($textSections);
+
+        $imageSections = $blog->imageSections;
+
+        foreach ($imageSections as $imageSection) {
+            unlink(public_path('storage/'.$imageSection->path));
+        }
+
+        ImageSection::destroy($imageSections);
+
+        $blog->delete();
     }
 
     public function store($title)

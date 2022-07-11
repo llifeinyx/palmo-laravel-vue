@@ -3,7 +3,10 @@
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\BlogCollection;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +34,11 @@ Route::group([
 ], function () {
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
 });
+
+Route::get('/user_blogs', function () {
+    return new BlogCollection((User::find(Auth::id()))->blogs);
+})->middleware('auth:sanctum');
+
 Route::group([
     'as' => 'blog.',
     'prefix' => 'blog',
@@ -39,5 +47,6 @@ Route::group([
     Route::get('/all', [BlogController::class, 'index'])->name('index')->withoutMiddleware(['auth:sanctum']);
     Route::get('/{blog}', [BlogController::class, 'show'])->name('show')->withoutMiddleware(['auth:sanctum']);
     Route::post('/', [BlogController::class, 'store'])->name('store');
+    Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('delete');
 });
 //Route::group([])

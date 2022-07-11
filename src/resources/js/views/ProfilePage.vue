@@ -11,6 +11,9 @@
                 <div :class="{'tab-control__button-active' : currentComponent.name === 'CreateBlog'}" @click="updateCurrentComponent(2)" class="tab-control__button">
                     Create blog
                 </div>
+                <div :class="{'tab-control__button-active' : currentComponent.name === 'MyBlogs'}" @click="updateCurrentComponent(3)" class="tab-control__button">
+                    My blogs
+                </div>
             </div>
             <div class="tab-current">
                 <keep-alive>
@@ -25,6 +28,7 @@
 import Profile from "../components/profile/Profile";
 import CreateBlog from "../components/profile/CreateBlog";
 import MyFavorite from "../components/profile/MyFavorite";
+import MyBlogs from "../components/profile/MyBlogs";
 
 
 export default {
@@ -37,11 +41,13 @@ export default {
     methods: {
         updateCurrentComponent(id) {
             if (id === 0) {
-                this.currentComponent = Profile;
+                this.currentComponent = Profile
             } else if (id === 1) {
                 this.currentComponent = MyFavorite
             } else if (id === 2) {
-                this.currentComponent = CreateBlog;
+                this.currentComponent = CreateBlog
+            } else if (id === 3) {
+                this.currentComponent = MyBlogs
             }
         }
     }

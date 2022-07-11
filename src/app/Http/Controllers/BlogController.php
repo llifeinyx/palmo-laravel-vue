@@ -32,14 +32,7 @@ class BlogController extends Controller
 
     public function store(BlogRequest $request)
     {
-
-        $this->service->store($request);
-
-        return $request;
-
-//        $path = $file->store('test');
-
-        //$this->service->store($request);
+        return $this->service->store($request);
     }
 
     public function show($id)
@@ -59,8 +52,12 @@ class BlogController extends Controller
         //
     }
 
-    public function destroy(Blog $blog)
+    public function destroy($id)
     {
-        //
+        $this->authorize('delete', Blog::find($id));
+
+        $this->service->destroy($id);
+
+        return true;
     }
 }

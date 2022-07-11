@@ -29,6 +29,11 @@ class BlogService
         //return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->find($id)->get();
     }
 
+    public function destroy($id)
+    {
+        $this->repository->destroy($id);
+    }
+
     public function store(Request $request)
     {
         $data = $request->except('_method', '_token');
@@ -59,5 +64,7 @@ class BlogService
                 'blog_id' => $blog->id
             ]);
         }
+
+        return $blog->id;
     }
 }

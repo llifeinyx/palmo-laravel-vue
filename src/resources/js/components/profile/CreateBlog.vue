@@ -53,6 +53,7 @@
 <script>
 import TextArea from "./blog/TextArea";
 import ImageArea from "./blog/ImageArea";
+import router from "../../router";
 
 export default {
     name: "CreateBlog",
@@ -206,8 +207,7 @@ export default {
                 .then(r => {
                     this.successCreate = true
                     setTimeout(() => this.successCreate = null, 3000)
-                    console.log(r)
-
+                    router.push('/blog/' + r.data)
                 })
                 .catch(e => {
                     console.log(e.response)

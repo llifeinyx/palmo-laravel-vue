@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('text_sections', function (Blueprint $table) {
             $table->id();
 
-            $table->string('text');
-            $table->string('header');
+            $table->text('text');
+            $table->text('header');
 
             $table->integer('index');
 

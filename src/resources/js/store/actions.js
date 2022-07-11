@@ -8,7 +8,9 @@ export default {
             context.commit("SET_USER", data.data)
         }
         catch (e){
-            context.commit("SET_USER", null)
+            localStorage.removeItem('x_xsrf_token')
+            this.$router.push('/')
+                        .then(r => location.reload())
         }
     },
 }
