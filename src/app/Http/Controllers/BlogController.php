@@ -25,11 +25,6 @@ class BlogController extends Controller
         return $blogs;
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(BlogRequest $request)
     {
         return $this->service->store($request);
@@ -40,11 +35,6 @@ class BlogController extends Controller
         $blog = $this->service->show($id);
 
         return $blog->toArray();
-    }
-
-    public function edit(Blog $blog)
-    {
-        //
     }
 
     public function update(Request $request, Blog $blog)

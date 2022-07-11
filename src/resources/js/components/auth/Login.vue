@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
+
 export default {
     name: "Login",
     data(){
@@ -34,6 +36,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['getToken']),
         login() {
             axios.get('/sanctum/csrf-cookie')
                 .then(response => {
@@ -42,7 +45,7 @@ export default {
                             //console.log(res)
                             localStorage.setItem('x_xsrf_token', res.config.headers['X-XSRF-TOKEN'])
                             this.$router.push('/')
-                                .then(r => location.reload())
+                                .then(r => this.getToken())
                         })
                         .catch(e => this.errors = e.response.data.errors)
                 });

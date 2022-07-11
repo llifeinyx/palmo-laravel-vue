@@ -13,4 +13,13 @@ export default {
                         .then(r => location.reload())
         }
     },
+    getToken(context) {
+        const token = localStorage.getItem('x_xsrf_token')
+
+        if (token) {
+            context.commit("SET_TOKEN", token)
+        } else {
+            throw 'Error: token = null'
+        }
+    }
 }
