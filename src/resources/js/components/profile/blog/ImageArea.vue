@@ -16,18 +16,44 @@ export default {
     name: "ImageArea",
     props: {
         id: null,
+        path: null,
+        show: false,
     },
     data() {
         return {
-            image: null,
-            showPreview: false,
+            image: this.path,
+            showPreview: this.show,
+        }
+    },
+    mounted() {
+        if (this.path) {
+            axios.get(this.path, {
+                responseType: "blob"
+            })
+                .then(r => {
+                    const blob = new Blob([r.data]);
+                    blob.lastModifiedDate = new Date()
+                    let filename = this.path.split('/')
+                    filename = filename[filename.length - 1]
+                    const image = new File([blob], filename, {
+                        type: r.headers['content-type']
+                    })
+                    this.$emit('upload-file', {file: image, id: this.id})
+                    let reader  = new FileReader();
+
+                    let that = this
+                    reader.readAsDataURL(image)
+                    reader.onload = function (event) {
+                        that.showPreview = true
+                        that.image = this.result
+                    }
+                })
         }
     },
     methods: {
         checkFile(event) {
-            let image = event.target.files[0];
+            let image = event.target.files[0]
             this.$emit('upload-file', {file: image, id: this.id})
-            //this.image = this.$refs.file;
             let reader  = new FileReader();
 
             let that = this

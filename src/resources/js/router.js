@@ -37,6 +37,11 @@ const router = new VueRouter({
            name: 'blog.show'
        },
        {
+           path: '/blog/update/:id',
+           component: () => import('./components/blogs/BlogUpdate'),
+           name: 'blog.update'
+       },
+       {
            path: '*',
            component: () => import('./components/abort/NotFound404'),
            name: 'not-found'

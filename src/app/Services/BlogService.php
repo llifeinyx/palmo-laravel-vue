@@ -67,4 +67,54 @@ class BlogService
 
         return $blog->id;
     }
+
+    public function update(Request $request, Blog $blog)
+    {
+        $data = $request->except('_method', '_token');
+
+        //update current blog
+        $this->repository->update($data['title'], $blog);
+
+        //Detach old tags
+        foreach ($blog->tags as $tag) {
+            $blog->tags()->detach($tag);
+        }
+
+        //Attach new tags
+        $tags = Tag::find($data['tags']);
+        $blog->tags()->attach($tags);
+
+        //Delete old text sections
+        foreach ($blog->textSections as $textSection) {
+            $textSection->delete();
+        }
+
+        //Set text sections for blog
+        foreach ($data['textSections'] as $textSection) {
+            TextSection::create([
+                'index' => $textSection['id'],
+                'header' => $textSection['header'],
+                'text' => $textSection['text'],
+                'blog_id' => $blog->id
+            ]);
+        }
+
+        //Delete old image sections
+        foreach ($blog->imageSections as $imageSection) {
+            unlink(public_path('storage/'.$imageSection->path));
+            $imageSection->delete();
+        }
+
+        //Set image sections for blog
+        foreach ($data['files'] as $image) {
+            $path = $image['file']->store('blogs/section_images', 'public');
+            ImageSection::create([
+                'index' => $image['id'],
+                'path' => $path,
+                'blog_id' => $blog->id
+            ]);
+        }
+
+        return $blog->id;
+    }
 }

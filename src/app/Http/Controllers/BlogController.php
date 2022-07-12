@@ -37,9 +37,11 @@ class BlogController extends Controller
         return $blog->toArray();
     }
 
-    public function update(Request $request, Blog $blog)
+    public function update(BlogRequest $request, $id)
     {
-        //
+        $this->authorize('update', Blog::find($id));
+
+        return $this->service->update($request, Blog::find($id));
     }
 
     public function destroy($id)

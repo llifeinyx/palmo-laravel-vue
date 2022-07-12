@@ -47,6 +47,7 @@ Route::group([
     Route::get('/all', [BlogController::class, 'index'])->name('index')->withoutMiddleware(['auth:sanctum']);
     Route::get('/{blog}', [BlogController::class, 'show'])->name('show')->withoutMiddleware(['auth:sanctum']);
     Route::post('/', [BlogController::class, 'store'])->name('store');
+    Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
     Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('delete');
 });
 //Route::group([])

@@ -48,5 +48,12 @@ class BlogRepository
 
         return $blog;
     }
+
+    public function update($title, Blog $blog)
+    {
+        $blog->update([
+           'title' => $title
+        ]);
+    }
 }
 

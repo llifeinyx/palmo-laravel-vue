@@ -8,6 +8,7 @@
              <div>
                  <button @click="showBlog(blog.id)" class="btn btn-outline-info">Show</button>
                  <button @click="deleteBlog(blog.id)" class="btn btn-outline-danger">Delete</button>
+                 <button @click="updateBlog(blog.id)" class="btn btn-outline-primary">Update</button>
              </div>
          </li>
      </ul>
@@ -34,6 +35,9 @@ export default {
     methods: {
         showBlog(id) {
             router.push('/blog/' + id)
+        },
+        updateBlog(id) {
+            router.push('/blog/update/' + id)
         },
         deleteBlog(id) {
             axios.delete('/api/blog/' + id)
