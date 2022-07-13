@@ -17,8 +17,10 @@
         </div>
         <div class="create-area">
             <div class="create-zone">
-                <div class="input-card" v-for="section in sections">
-                    <component @upload-file="uploadFile"
+                <draggable v-model="sections">
+                    <component class="input-card" v-for="section in sections"
+                               :key="section.id"
+                               @upload-file="uploadFile"
                                @delete-image-section="deleteImageSection"
                                @delete-text-section="deleteTextSection"
                                @set-header="setHeader"
@@ -28,9 +30,8 @@
                                :path="'/storage/' + section.path"
                                :show="true"
                                :is="section.type"
-                               :key="section.id"
                                :id="section.id"/>
-                </div>
+                </draggable>
             </div>
         </div>
         <div class="last-area">
@@ -55,7 +56,7 @@
                 <input v-model="tag" type="text" name="tags" id="tags" placeholder="Tags">
             </div>
             <div class="submit-blog">
-                <button @click="createBlog" class="btn btn-outline-primary">create blog</button>
+                <button @click="createBlog" class="btn btn-outline-primary">update blog</button>
             </div>
         </div>
     </div>
@@ -66,9 +67,11 @@ import TextArea from "../profile/blog/TextArea";
 import ImageArea from "../profile/blog/ImageArea";
 import router from "../../router";
 
+import draggable from "vuedraggable";
+
 export default {
     name: "BlogUpdate",
-    components: {TextArea, ImageArea},
+    components: {TextArea, ImageArea, draggable},
     data() {
         return {
             blogId: router.currentRoute.params.id,
@@ -98,16 +101,21 @@ export default {
         axios.get('/api/tags')
             .then(r => {
                 this.tags = r.data
-                this.suggestedTags = r.data
                 axios.get('/api/blog/' + this.blogId)
                     .then(r => {
                         const blog = r.data
-
                         this.title = blog.title
-
                         for (let tag of blog.tags) {
+                            delete tag.pivot
                             this.addCurrentTag(tag)
                         }
+                        this.tags.forEach(tag => {
+                            let result = this.currentTags.find(currentTag => currentTag.name === tag.name)
+
+                            if (!result) {
+                                this.suggestedTags.push(tag)
+                            }
+                        })
 
                         for (let imageSection of blog.image_sections) {
                             imageSection.type = ImageArea
@@ -215,25 +223,24 @@ export default {
                 this.formData.append('tags[]', tag.id)
             })
 
-            //push text sections
-            const textSections = this.sections.filter(section => section.type === TextArea)
-            textSections.forEach((section, index) => {
-
-                if (section.text){
-                    this.formData.append('textSections[' + index + '][text]', section.text)
+            //push sections
+            this.sections.forEach((section, index) => {
+                //push text sections
+                if (section.type === TextArea) {
+                    if (section.text){
+                        this.formData.append('textSections[' + index + '][text]', section.text)
+                    }
+                    if (section.header) {
+                        this.formData.append('textSections[' + index + '][header]', section.header)
+                    }
+                    this.formData.append('textSections[' + index + '][id]', index)
                 }
-                if (section.header) {
-                    this.formData.append('textSections[' + index + '][header]', section.header)
-                }
-                this.formData.append('textSections[' + index + '][id]', section.id)
-            })
-
-            //push image sections
-            const imageSections = this.sections.filter(section => section.type === ImageArea)
-            imageSections.forEach((image, index) => {
-                if(image.file !== ""){
-                    this.formData.append('files[' + index + '][file]', image.file)
-                    this.formData.append('files[' + index + '][id]', image.id)
+                //push image sections
+                if (section.type === ImageArea) {
+                    if(section.file !== ""){
+                        this.formData.append('files[' + index + '][file]', section.file)
+                        this.formData.append('files[' + index + '][id]', index)
+                    }
                 }
             })
 
@@ -287,6 +294,7 @@ export default {
 <style scoped>
 .create-blog-container {
     max-width: 1280px;
+    min-height: 800px;
     margin: 50px auto;
     display: flex;
     background-color: #2d3748;
@@ -295,7 +303,7 @@ export default {
 .create-panel {
     padding: 10px;
     min-width: 250px;
-    min-height: 500px;
+    min-height: 800px;
     border-right: solid 1px #0d1a2f;
 }
 .create-panel > h4 {
@@ -317,7 +325,7 @@ export default {
 }
 .create-area {
     overflow-y: scroll;
-    height: 500px;
+    height: 800px;
     display: flex;
     justify-content: center;
     min-width: 500px;

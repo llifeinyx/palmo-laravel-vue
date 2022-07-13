@@ -40,7 +40,7 @@ class BlogRequest extends FormRequest
             'files' => 'required|array',
             'files.*' => 'array|max:5',
             'files.*.id' => 'required|integer',
-            'files.*.file' => 'required|file|image'
+            'files.*.file' => 'required|file|image|max:8192'
         ];
     }
 }

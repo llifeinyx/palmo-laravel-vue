@@ -27,6 +27,7 @@
     "dependencies": {
         "vite-plugin-vue2": "^2.0.1",
         "vue-router": "^3.5.4",
+        "vuedraggable": "^2.24.3",
         "vuex": "^3.6.2"
     }
 }

@@ -17,9 +17,17 @@
         </div>
         <div class="create-area">
             <div class="create-zone">
-                <div class="input-card" v-for="section in sections">
-                    <component @upload-file="uploadFile" @delete-image-section="deleteImageSection" @delete-text-section="deleteTextSection" @set-header="setHeader" @set-text="setText" :is="section.type" :key="section.id" :id="section.id"/>
-                </div>
+                <draggable v-model="sections">
+                            <component class="input-card" v-for="section in sections"
+                                       :key="section.id"
+                                       @upload-file="uploadFile"
+                                       @delete-image-section="deleteImageSection"
+                                       @delete-text-section="deleteTextSection"
+                                       @set-header="setHeader"
+                                       @set-text="setText"
+                                       :is="section.type"
+                                       :id="section.id"/>
+                </draggable>
             </div>
         </div>
         <div class="last-area">
@@ -55,9 +63,11 @@ import TextArea from "./blog/TextArea";
 import ImageArea from "./blog/ImageArea";
 import router from "../../router";
 
+import draggable from "vuedraggable";
+
 export default {
     name: "CreateBlog",
-    components: {TextArea, ImageArea},
+    components: {TextArea, ImageArea, draggable},
     data() {
         return {
             formData: new FormData(),
@@ -176,25 +186,24 @@ export default {
                 this.formData.append('tags[]', tag.id)
             })
 
-            //push text sections
-            const textSections = this.sections.filter(section => section.type === TextArea)
-            textSections.forEach((section, index) => {
-
-                if (section.text){
-                    this.formData.append('textSections[' + index + '][text]', section.text)
+            //push sections
+            this.sections.forEach((section, index) => {
+                //push text sections
+                if (section.type === TextArea) {
+                    if (section.text){
+                        this.formData.append('textSections[' + index + '][text]', section.text)
+                    }
+                    if (section.header) {
+                        this.formData.append('textSections[' + index + '][header]', section.header)
+                    }
+                    this.formData.append('textSections[' + index + '][id]', index)
                 }
-                if (section.header) {
-                    this.formData.append('textSections[' + index + '][header]', section.header)
-                }
-                this.formData.append('textSections[' + index + '][id]', section.id)
-            })
-
-            //push image sections
-            const imageSections = this.sections.filter(section => section.type === ImageArea)
-            imageSections.forEach((image, index) => {
-                if(image.file !== ""){
-                    this.formData.append('files[' + index + '][file]', image.file)
-                    this.formData.append('files[' + index + '][id]', image.id)
+                //push image sections
+                if (section.type === ImageArea) {
+                    if(section.file !== ""){
+                        this.formData.append('files[' + index + '][file]', section.file)
+                        this.formData.append('files[' + index + '][id]', index)
+                    }
                 }
             })
 
@@ -247,11 +256,12 @@ export default {
 <style scoped>
 .create-blog-container {
     display: flex;
+    min-height: 800px;
 }
 .create-panel {
     padding: 10px;
     min-width: 250px;
-    min-height: 500px;
+    min-height: 800px;
     border-right: solid 1px #0d1a2f;
 }
 .create-panel > h4 {
@@ -273,7 +283,7 @@ export default {
 }
 .create-area {
     overflow-y: scroll;
-    height: 500px;
+    max-height: 800px;
     display: flex;
     justify-content: center;
     min-width: 500px;

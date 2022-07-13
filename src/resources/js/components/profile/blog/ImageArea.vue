@@ -2,6 +2,7 @@
     <div>
         <label :for="id" class="upload-zone">
             <div>upload image</div>
+            <div v-if="error" style="color: #f84848">Image too large</div>
             <img class="upload-image" v-bind:src="image" v-show="showPreview" alt="image"/>
         </label>
         <input @change="checkFile($event)" :name="'image[]'" :id="id" :ref="'image' + id" type="file" hidden accept="image/*">
@@ -21,6 +22,7 @@ export default {
     },
     data() {
         return {
+            error: null,
             image: this.path,
             showPreview: this.show,
         }
@@ -53,6 +55,13 @@ export default {
     methods: {
         checkFile(event) {
             let image = event.target.files[0]
+            console.log(image)
+            if (image.size > 1200000) {
+                this.error = true
+                setTimeout(() => this.error = null, 3000)
+                return false
+            }
+
             this.$emit('upload-file', {file: image, id: this.id})
             let reader  = new FileReader();
 
