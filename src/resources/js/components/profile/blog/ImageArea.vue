@@ -55,7 +55,6 @@ export default {
     methods: {
         checkFile(event) {
             let image = event.target.files[0]
-            console.log(image)
             if (image.size > 1200000) {
                 this.error = true
                 setTimeout(() => this.error = null, 3000)

@@ -32,11 +32,8 @@ export default {
         ...mapGetters(["stateUser"]),
     },
     mounted() {
-        this.getUser()
-            .then(r => {
-                this.user = this.stateUser
-                this.name = this.user.name
-            });
+        this.user = this.stateUser
+        this.name = this.stateUser.name
     },
     methods: {
         ...mapActions(["getUser"]),
@@ -44,7 +41,6 @@ export default {
             this.user.name = this.name
             axios.put('/api/user/' + this.user.id, this.user)
                 .then(r => {
-                    console.log(r.status)
                     this.getUser()
                         .then(r => {
                             this.user = this.stateUser

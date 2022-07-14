@@ -25,12 +25,9 @@ class BlogRequest extends FormRequest
      */
     public function rules()
     {
-        //last id
-        $lastId = Tag::query()->latest('id')->first();
-
         return [
             'tags' => 'required|array|max:5',
-            'tags.*' => 'integer|min:0|max:'.$lastId->id,
+            'tags.*' => 'required|string|max:12',
             'title' => 'required|string|max:20',
             'textSections' => 'required|array|max:5',
             'textSections.*' => 'array',

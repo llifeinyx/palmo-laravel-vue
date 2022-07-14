@@ -42,7 +42,20 @@ class BlogService
         $blog = $this->repository->store($data['title']);
 
         //Attach tags for blog
-        $tags = Tag::find($data['tags']);
+        $tagsAttach = [];
+        foreach ($data['tags'] as $tag) {
+            $tagModel = Tag::query()->where('name', '=', $tag)->first();
+
+            if ($tagModel === null) {
+                $tagModel = Tag::create([
+                    'name' => $tag,
+                ]);
+            }
+
+            array_push($tagsAttach, $tagModel->id);
+        }
+        $tagsAttach = array_unique($tagsAttach);
+        $tags = Tag::find($tagsAttach);
         $blog->tags()->attach($tags);
 
         //Set text sections for blog
