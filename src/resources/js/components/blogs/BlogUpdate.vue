@@ -100,13 +100,17 @@ export default {
     mounted() {
         axios.get('/api/tags')
             .then(r => {
-                this.tags = r.data
+                this.tags = r.data.map(tag => {
+                    delete tag.id
+                    return tag
+                })
                 axios.get('/api/blog/' + this.blogId)
                     .then(r => {
                         const blog = r.data
                         this.title = blog.title
                         for (let tag of blog.tags) {
                             delete tag.pivot
+                            delete tag.id
                             this.addCurrentTag(tag)
                         }
                         this.tags.forEach(tag => {
@@ -137,15 +141,48 @@ export default {
             })
     },
     watch: {
+        // tag: function (val) {
+        //     this.suggestedTags = this.tags.filter(tag => {
+        //         if (this.currentTags.includes(tag.name)){
+        //             return false
+        //         }
+        //         if (tag.name.includes(val.toLowerCase())) {
+        //             return tag
+        //         }
+        //     })
+        // }
         tag: function (val) {
+            if (val.length > 12) {
+                this.tagErrors = 'Name of tag maximum 12 characters!'
+                val = val.slice(0, 12)
+            } else {
+                this.tagErrors = null
+            }
+
+            let boolPush = false
             this.suggestedTags = this.tags.filter(tag => {
-                if (this.currentTags.includes(tag.name)){
+                if (tag.name.toLowerCase() === val.toLowerCase()) {
+                    boolPush = true
+                }
+                if (this.currentTags.find(currentTag => currentTag.name.toLowerCase() === val.toLowerCase())) {
+                    boolPush = true
+                }
+
+                if (this.currentTags.includes(tag)){
                     return false
                 }
+
                 if (tag.name.includes(val.toLowerCase())) {
                     return tag
                 }
             })
+            if (!val) {
+                return false
+            }
+
+            if (!boolPush) {
+                this.suggestedTags.push({name: val})
+            }
         }
     },
     methods: {
@@ -220,7 +257,7 @@ export default {
         createBlog() {
             //push current tags
             this.currentTags.forEach(tag => {
-                this.formData.append('tags[]', tag.id)
+                this.formData.append('tags[]', tag.name)
             })
 
             //push sections

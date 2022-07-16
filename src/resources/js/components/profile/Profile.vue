@@ -17,7 +17,6 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-
 export default {
     name: "Profile",
     data() {
@@ -33,7 +32,17 @@ export default {
     },
     mounted() {
         this.user = this.stateUser
-        this.name = this.stateUser.name
+
+        if (this.stateUser.name) {
+            this.name = this.stateUser.name
+        }
+
+        if (this.stateUser.name === undefined) {
+            this.getUser()
+                .then(r => {
+                    this.name = this.stateUser.name
+                })
+        }
     },
     methods: {
         ...mapActions(["getUser"]),

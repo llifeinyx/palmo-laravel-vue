@@ -38,10 +38,10 @@ export default {
     },
     methods: {
         storage(path) {
-            return 'storage/' + path
+            return '/storage/' + path
         },
         openBlog() {
-            router.push('blog/' + this.id)
+            router.push('/blog/' + this.id)
         }
 
     }

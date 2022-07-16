@@ -6,9 +6,10 @@
 
 <script>
 import BlogList from "../components/blogList/BlogList";
+
 export default {
     name: "MainPage",
-    components: {BlogList},
+    components: { BlogList},
 }
 </script>
 
