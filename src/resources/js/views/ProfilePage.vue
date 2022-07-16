@@ -5,9 +5,6 @@
                 <div :class="{'tab-control__button-active' : currentComponent.name === 'Profile'}" @click="updateCurrentComponent(0)" class="tab-control__button">
                     Profile
                 </div>
-                <div :class="{'tab-control__button-active' : currentComponent.name === 'null'}" @click="updateCurrentComponent(1)" class="tab-control__button">
-                    My favorite
-                </div>
                 <div :class="{'tab-control__button-active' : currentComponent.name === 'CreateBlog'}" @click="updateCurrentComponent(2)" class="tab-control__button">
                     Create blog
                 </div>
@@ -27,7 +24,6 @@
 <script>
 import Profile from "../components/profile/Profile";
 import CreateBlog from "../components/profile/CreateBlog";
-import MyFavorite from "../components/profile/MyFavorite";
 import MyBlogs from "../components/profile/MyBlogs";
 
 
@@ -43,7 +39,7 @@ export default {
             if (id === 0) {
                 this.currentComponent = Profile
             } else if (id === 1) {
-                this.currentComponent = MyFavorite
+                this.currentComponent = null
             } else if (id === 2) {
                 this.currentComponent = CreateBlog
             } else if (id === 3) {

@@ -10,6 +10,10 @@
                 <div class="suggested-tag" v-for="suggestedTag in suggestedTags" @click="addCurrentTag(suggestedTag)"><span>{{suggestedTag.name}}</span><span class="special-char__green">+</span></div>
             </div>
         </div>
+        <div>
+            <span>Search by name:</span>
+            <input type="text" v-model="name" placeholder="name of blog">
+        </div>
     </div>
 </template>
 
@@ -33,6 +37,7 @@ export default {
             tags: [],
             suggestedTags: [],
             currentTags: [],
+            name: '',
         }
     },
     methods: {
@@ -66,6 +71,13 @@ export default {
                 }
             })
         },
+        name: function (val) {
+            this.$emit('update-name', val)
+        },
+        currentTags: function (val) {
+          this.$emit('update-current-tags', val)
+        }
+
     },
 }
 </script>

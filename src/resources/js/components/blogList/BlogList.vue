@@ -2,7 +2,10 @@
     <div class="blogs-container">
         <filter-component
             @sort-by-newest="sortByNewest"
-            @filter-by-tags="filterByTags"/>
+            @filter-by-tags="filterByTags"
+            @filter-by-name="filterByName"
+            @update-current-tags="updateCurrentTags"
+            @update-name="updateName"/>
         <div class="blogs-list">
             <blog-preview
                 v-for="blog in filteredBlogs"
@@ -28,7 +31,9 @@ export default {
         return {
             blogs: [],
             filteredBlogs: [],
+            backupBlogs: [],
             currentTags: [],
+            filterBoolean: true
         }
     },
     mounted() {
@@ -46,8 +51,42 @@ export default {
         sortByNewest() {
             this.filteredBlogs.sort((a, b) => a.created_at < b.created_at ? 1 : -1)
         },
+        filterByName(e) {
+            this.filteredBlogs = this.filteredBlogs.filter(blog => blog.title.includes(e))
+        },
         filterByTags(e) {
             this.currentTags = e
+            let currentTags = this.currentTags.map(tag => tag.id)
+
+            this.filteredBlogs = this.filteredBlogs.filter(blog => {
+                    const blogTags = blog.tags.map(tag => {
+                        return tag.id
+                    })
+                    if (this.containsAll(currentTags, blogTags)) {
+                        return blog
+                    } else {
+                        return false
+                    }
+                }
+            )
+        },
+        updateCurrentTags(e) {
+            this.currentTags = e
+            this.globalFilter(this.name, this.currentTags)
+        },
+        updateName(e) {
+            this.name = e
+            this.globalFilter(this.name, this.currentTags)
+        },
+        globalFilter(name, tags) {
+            this.filteredBlogs = this.blogs
+
+            if (name) {
+                this.filterByName(name)
+            }
+            if (tags.length > 0) {
+                this.filterByTags(tags)
+            }
         },
         containsAll(needles, haystack) {
             for (let item of needles) {
@@ -58,29 +97,6 @@ export default {
             return false
         }
     },
-    watch: {
-        currentTags: function (arr) {
-            if (arr.length < 1) {
-                this.filteredBlogs = this.blogs
-            } else {
-                this.filteredBlogs = this.blogs
-                let currentTags = arr.map(tag => tag.id)
-
-                this.filteredBlogs = this.filteredBlogs.filter(blog => {
-                        const blogTags = blog.tags.map(tag => {
-                            return tag.id
-                        })
-                        if (this.containsAll(currentTags, blogTags)) {
-                            return blog
-                        } else {
-                            return false
-                        }
-                    }
-                )
-            }
-
-        }
-    }
 }
 </script>
 
