@@ -34,6 +34,7 @@
             <div>
                 <div v-if="successCreate" class="success">Success create blog!</div>
                 <div v-if="textSectionInnerError" class="section-error">{{ textSectionInnerError }}</div>
+                <div v-if="imageSectionError" class="section-error">{{ imageSectionError }}</div>
                 <div v-if="textSectionError" class="section-error">{{ textSectionError }}</div>
                 <h4>Title of blog:</h4>
                 <input v-model="title" type="text" name="title" id="title" placeholder="Maximum 20 characters">
@@ -78,6 +79,7 @@ export default {
             currentTags: [],
             tagError: false,
             countCurrentTags: 0,
+            imageSectionError: null,
             textError: null,
             imageError: null,
             textSectionError: null,
@@ -262,6 +264,11 @@ export default {
                         delete errors.textSections
                         setTimeout(() => this.textSectionError = null, 3000)
                     }
+                    if (errors.files) {
+                        this.imageSectionError = 'Image field required!'
+                        setTimeout(() => this.imageSectionError = null, 3000)
+                    }
+
                     const keys = Object.keys(errors)
                     keys.forEach((key) => {
                         if (key.includes('textSections.')) {
