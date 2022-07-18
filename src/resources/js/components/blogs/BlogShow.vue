@@ -8,6 +8,7 @@
                    :text="section.text"
                    :header="section.header"
                    class="section-margin"/>
+        <comment-section :comments="blog.comments"/>
     </div>
 </template>
 
@@ -15,11 +16,12 @@
 import router from "../../router";
 import TextSection from "./sections/TextSection";
 import ImageSection from "./sections/ImageSection";
+import CommentSection from "./CommentSection";
 
 
 export default {
     name: "BlogShow",
-    components: {TextSection, ImageSection},
+    components: {CommentSection, TextSection, ImageSection},
     data() {
         return {
             id: router.currentRoute.params.id,

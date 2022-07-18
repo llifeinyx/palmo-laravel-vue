@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\BlogCollection;
@@ -49,5 +50,15 @@ Route::group([
     Route::post('/', [BlogController::class, 'store'])->name('store');
     Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
     Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('delete');
+});
+
+Route::group([
+    'as' => 'comments.',
+    'prefix' => 'comments',
+    'middleware' => ['auth:sanctum']
+], function () {
+    Route::post('/', [CommentController::class, 'store'])->name('store');
+    Route::put('/{comment}', [CommentController::class, 'update'])->name('update');
+    Route::delete('/{comment}', [CommentController::class, 'destroy'])->name('delete');
 });
 //Route::group([])

@@ -25,7 +25,7 @@ class BlogService
 
     public function show($id)
     {
-        return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->get()->find($id);
+        return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user', 'comments'])->get()->find($id);
         //return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->find($id)->get();
     }
 
