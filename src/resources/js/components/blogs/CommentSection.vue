@@ -44,7 +44,7 @@ export default {
             this.antispamError = false
         },
         addComment() {
-            if (!this.stateUser) {
+            if (!this.stateUser.id) {
                 router.push({name: 'auth.login'})
                 return false
             }
