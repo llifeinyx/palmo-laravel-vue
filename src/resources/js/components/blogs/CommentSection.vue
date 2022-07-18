@@ -10,8 +10,19 @@
             <button @click="addComment" class="btn btn-outline-primary" type="button">Send</button>
         </div>
         <div class="m-4" v-for="comment in comments">
-            <p style="color: #9571FC">{{comment.user_id}}</p>
+            <p style="color: #9571FC">{{comment.username}}</p>
             <p>{{comment.text}}</p>
+            <div v-if="stateToken && stateUser.id === comment.user_id">
+                <div class="dropdown-center">
+                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><p class="dropdown-item btn-sm" @click="deleteComment(comment)">Delete</p></li>
+                        <li><p class="dropdown-item btn-sm">Change</p></li>
+                    </ul>
+                </div>
+            </div>
             <hr>
         </div>
     </div>
@@ -24,7 +35,7 @@ import router from "../../router";
 export default {
     name: "CommentSection",
     computed: {
-        ...mapGetters(["stateUser"]),
+        ...mapGetters(["stateUser", "stateToken"]),
     },
     data() {
         return {
@@ -32,7 +43,6 @@ export default {
             antispamError: false,
             input: '',
             inputError: false,
-            //comments: []
         }
     },
     props: {
@@ -42,6 +52,14 @@ export default {
         resetErrors() {
             this.inputError = false
             this.antispamError = false
+        },
+        deleteComment(comment) {
+            axios.delete('/api/comments/' + comment.id)
+                .then(r => {
+                    let i = this.comments.indexOf(comment)
+                    this.comments.splice(i, 1)
+                })
+                .catch(e => console.log(e.response))
         },
         addComment() {
             if (!this.stateUser.id) {
@@ -74,7 +92,8 @@ export default {
 
             axios.post('/api/comments/', comment)
                 .then(r => {
-                    this.comments.push({user: this.stateUser, text: this.input})
+                    this.comments.push(r.data)
+                    //this.comments.push({username: this.stateUser.name, text: this.input})
                 })
                 .catch(e => console.log(e.response))
         }

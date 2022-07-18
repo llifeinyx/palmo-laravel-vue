@@ -6,8 +6,10 @@ use App\Models\Blog;
 use App\Models\ImageSection;
 use App\Models\Tag;
 use App\Models\TextSection;
+use App\Models\User;
 use App\Repositories\BlogRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BlogService
 {
@@ -25,8 +27,13 @@ class BlogService
 
     public function show($id)
     {
-        return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user', 'comments'])->get()->find($id);
-        //return $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user'])->find($id)->get();
+        $model = $this->repository->query()->with(['tags', 'textSections', 'imageSections', 'user', 'comments'])->get()->find($id);
+
+        foreach ($model->comments as $comment) {
+            $comment->username = User::find($comment->user_id)->name;
+        }
+
+        return $model;
     }
 
     public function destroy($id)

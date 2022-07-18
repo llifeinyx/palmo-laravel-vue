@@ -19,14 +19,12 @@ class CommentService
     {
         $data = $request->except(['_method', '_token']);
 
-        $this->repository->store($data);
-
-        return true;
+        return $this->repository->store($data);
     }
 
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-
+        $this->repository->destroy($comment);
     }
 
     public function update(Request $request, Comment $comment)

@@ -30,9 +30,9 @@ class CommentRepository
         return $comment;
     }
 
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-
+        $comment->delete();
     }
 
     public function update(Comment $comment)

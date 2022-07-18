@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Blog;
+use App\Models\Comment;
 use App\Models\ImageSection;
 use App\Models\TextSection;
 use Illuminate\Filesystem\Filesystem;
@@ -22,12 +23,15 @@ class BlogRepository
 
     public function destroy($id)
     {
+        //delete tags
         $blog = Blog::find($id);
         $blog->tags()->detach($blog->tags);
 
+        //delete text sections
         $textSections = $blog->textSections;
         TextSection::destroy($textSections);
 
+        //delete image sections
         $imageSections = $blog->imageSections;
 
         foreach ($imageSections as $imageSection) {
@@ -35,6 +39,10 @@ class BlogRepository
         }
 
         ImageSection::destroy($imageSections);
+
+        //delete comments
+        $comments = $blog->comments;
+        Comment::destroy($comments);
 
         $blog->delete();
     }

@@ -18,7 +18,7 @@ class CommentController extends Controller
 
     public function store(CommentRequest $request)
     {
-        $this->service->store($request);
+        return $this->service->store($request);
     }
 
     public function update(Request $request, Comment $comment)
@@ -28,6 +28,7 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
-        //
+        $this->authorize('delete', $comment);
+        $this->service->destroy($comment);
     }
 }
