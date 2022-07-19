@@ -62,8 +62,12 @@ export default {
                 .catch(e => console.log(e.response))
         },
         changeComment(comment) {
-            comment.disabled = !comment.disabled
-            comment.text = comment.text + '1'
+            const i = this.comments.indexOf(comment)
+            this.$emit('change-comment', i)
+            this.comments[i].created_at = 'sdfgsdgrf'
+            comment.created_at = 'abobafasdgfs'
+            comment.disabled = false
+            console.log(comment)
             //comment.disabled ? comment.disabled = false : comment.disabled = true
         },
         addComment() {

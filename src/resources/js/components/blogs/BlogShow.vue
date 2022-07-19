@@ -8,7 +8,7 @@
                    :text="section.text"
                    :header="section.header"
                    class="section-margin"/>
-        <comment-section :comments="blog.comments"/>
+        <comment-section @change-comment="changeComment" :comments="blog.comments"/>
     </div>
 </template>
 
@@ -47,6 +47,10 @@ export default {
     methods: {
         storage(path) {
             return 'storage/' + path
+        },
+        changeComment(e) {
+            console.log(e)
+            this.blog.comments[e].disabled = !this.blog.comments[e].disabled
         },
         buildSectionArray() {
             let textSections = this.blog.text_sections
