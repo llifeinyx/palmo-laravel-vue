@@ -34,6 +34,10 @@ export default {
             .then(r => {
                 //console.log(r)
                 this.blog = r.data
+                this.blog.comments = this.blog.comments.map(com => {
+                    com.disabled = true
+                    return com
+                })
                 this.buildSectionArray()
             })
             .catch(e => {

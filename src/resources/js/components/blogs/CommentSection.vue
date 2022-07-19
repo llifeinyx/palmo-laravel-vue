@@ -11,7 +11,7 @@
         </div>
         <div class="m-4" v-for="comment in comments">
             <p style="color: #9571FC">{{comment.username}}</p>
-            <p>{{comment.text}}</p>
+            <textarea :disabled="comment.disabled" class="comment-text" v-model="comment.text"></textarea>
             <div v-if="stateToken && stateUser.id === comment.user_id">
                 <div class="dropdown-center">
                     <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,7 +19,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
                         <li><p class="dropdown-item btn-sm" @click="deleteComment(comment)">Delete</p></li>
-                        <li><p class="dropdown-item btn-sm">Change</p></li>
+                        <li><p class="dropdown-item btn-sm" @click="changeComment(comment)">Change</p></li>
                     </ul>
                 </div>
             </div>
@@ -61,6 +61,11 @@ export default {
                 })
                 .catch(e => console.log(e.response))
         },
+        changeComment(comment) {
+            comment.disabled = !comment.disabled
+            comment.text = comment.text + '1'
+            //comment.disabled ? comment.disabled = false : comment.disabled = true
+        },
         addComment() {
             if (!this.stateUser.id) {
                 router.push({name: 'auth.login'})
@@ -92,7 +97,9 @@ export default {
 
             axios.post('/api/comments/', comment)
                 .then(r => {
-                    this.comments.push(r.data)
+                    const comment = r.data
+                    comment.disabled = true
+                    this.comments.push(comment)
                     //this.comments.push({username: this.stateUser.name, text: this.input})
                 })
                 .catch(e => console.log(e.response))
@@ -102,5 +109,11 @@ export default {
 </script>
 
 <style scoped>
-
+.comment-text {
+    resize: none;
+    width: 100%;
+    color: #fff;
+    background: none;
+    border: none;
+}
 </style>

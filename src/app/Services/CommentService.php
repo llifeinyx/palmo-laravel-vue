@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Comment;
+use App\Models\User;
 use App\Repositories\CommentRepository;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,11 @@ class CommentService
     {
         $data = $request->except(['_method', '_token']);
 
-        return $this->repository->store($data);
+        $comment = $this->repository->store($data);
+
+        $comment->username = User::find($comment->user_id)->name;
+
+        return $comment;
     }
 
     public function destroy(Comment $comment)
