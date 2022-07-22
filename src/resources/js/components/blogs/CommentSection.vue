@@ -19,7 +19,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
                         <li><p class="dropdown-item btn-sm" @click="deleteComment(comment)">Delete</p></li>
-                        <li><p class="dropdown-item btn-sm" @click="changeComment(comment)">Change</p></li>
+<!--                        <li><p class="dropdown-item btn-sm" @click="changeComment(comment)">Change</p></li>-->
                     </ul>
                 </div>
             </div>
@@ -62,8 +62,8 @@ export default {
                 .catch(e => console.log(e.response))
         },
         changeComment(comment) {
-            comment.disabled = !comment.disabled
-            comment.text = comment.text + '1'
+            // comment.disabled = !comment.disabled
+            // comment.text = comment.text + '1'
             //comment.disabled ? comment.disabled = false : comment.disabled = true
         },
         addComment() {
